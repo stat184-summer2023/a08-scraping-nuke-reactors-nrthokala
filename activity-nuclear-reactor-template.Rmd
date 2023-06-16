@@ -104,7 +104,7 @@ Japan2 <-
   Japan %>%
   filter(construction >= cutoffDate) %>% 
   mutate(num = 2*(1:nrow(.)))
-
+ 
 Japan1 %>%
   ggplot(aes(x = operation, y = num)) +
     geom_segment(aes(x = construction,
