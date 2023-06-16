@@ -40,7 +40,7 @@ Japan <-
 
 ## Your turn: In what ways is the table tidy? How is it not tidy? What’s different about it from a tidy table?
 
-My answer here..... 
+The table is tidy because all columns in the data are variables
 
 
 ## Your Turn: Plot Net Generation Capacity vs Construction Date
