@@ -12,9 +12,29 @@ library(tidyverse)
 ## Scrape the Data 
 
 ```{r}
-#My code here.... 
+web_page <-
+  read_html("https://en.wikipedia.org/wiki/List_of_commercial_nuclear_reactors")
+Tables <-
+  web_page %>%
+  html_nodes("table")
+Japan <-
+  Tables[[25]] %>%
+  html_table(fill = TRUE)
 
+names(Japan) <- c("name", "unit", "rector_type",
+                  "reactor_model", "status", "capacity_net",
+                  "capacity_gross", "construction",
+                  "operation", "closure")
 
+Japan <-
+  Japan %>%
+  filter(row_number() > 1)
+
+Japan <- 
+  Japan %>%
+  mutate(capacity_net=as.numeric(capacity_net)) %>%
+  mutate(capacity_gross=as.numeric(capacity_gross)) %>%
+  mutate(construction=dmy(Japan$construction))
 ```
 
 
@@ -26,7 +46,7 @@ My answer here.....
 ## Your Turn: Plot Net Generation Capacity vs Construction Date
 
 ```{r}
-#my code here 
+
 
 
 ```
@@ -35,7 +55,34 @@ My answer here.....
 ## Your Turn: Scrape & Clean China Data (then merge with Japan)
 
 ```{r}
-#my code here... 
+web_page <-
+  read_html("https://en.wikipedia.org/wiki/List_of_commercial_nuclear_reactors")
+Tables <-
+  web_page %>%
+  html_nodes("table")
+China <-
+  Tables[[11]] %>%
+  html_table(fill = TRUE)
+
+names(China) <- c("name", "unit", "rector_type",
+                  "reactor_model", "status", "capacity_net",
+                  "capacity_gross", "construction",
+                  "operation", "closure")
+
+China <-
+  China %>%
+  filter(row_number() > 1)
+
+China <- 
+  China %>%
+  mutate(capacity_net=as.numeric(capacity_net)) %>%
+  mutate(capacity_gross=as.numeric(capacity_gross)) %>%
+  mutate(construction=dmy(China$construction))
+
+China <-
+  China %>%
+  mutate(operation=dmy(China$operation)) %>% 
+  mutate(closure=dmy(China$closure))
 
 ```
 
@@ -44,6 +91,29 @@ My answer here.....
 ## Your Turn: Reconstruct Info Graphic of Japan Reactors (or other country of interest)
 
 ```{r}
-#My code here
+Japan <-
+  Japan %>%
+  mutate(id = paste(name, unit, sep = " "))
+
+cutoffDate <- as_date("1981-01-01")
+Japan1 <-
+  Japan %>%
+  filter(construction < cutoffDate) %>% 
+  mutate(num = 2*(1:nrow(.)))
+Japan2 <-
+  Japan %>%
+  filter(construction >= cutoffDate) %>% 
+  mutate(num = 2*(1:nrow(.)))
+
+Japan1 %>%
+  ggplot(aes(x = operation, y = num)) +
+    geom_segment(aes(x = construction,
+                     y = num,
+                     xend = operation,
+                     yend = num)) +
+  labs(y = "Reactor Name",
+       x = "year") +
+  ylim(c(1,2*nrow(Japan))) +
+  scale_y_continuous(breaks = Japan2$num, labels = Japan2$id)
 
 ```
